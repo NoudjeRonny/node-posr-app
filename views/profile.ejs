@@ -1,0 +1,40 @@
+
+<%- include('partials/header') %>
+
+<div class="contianer">
+<div class="row mt-5">
+    <div class="col-lg-5 mx-auto">
+        <card class="shadow">
+            <div class="card-header">
+                <h2 class="fw-bold text-secondary">User Profile</h2>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped" >
+                    <tr>
+                        <th>name</th>
+                        <td><%= user.name %> </td>
+                    </tr>
+                    <tr>
+                        <th>email</th>
+                        <td><%= user.email %> </td>
+                    </tr>
+                    <tr>
+                        <th>createAt</th>
+                        <td><%= user.createdAt %> </td>
+                    </tr>
+                    <tr>
+                        <th> logout</th>
+                        <td><form action="/logout" method="post" id="logoutE">
+                            <input  onclick='confirmed()' type="submit" value="Logout" class="btn btn-danger">
+                        </form>
+                    </td>
+                    </tr>
+
+                </table>
+            </div>
+        </card>
+    </div>
+</div>
+</div>
+
+<%- include('partials/footer') %>
