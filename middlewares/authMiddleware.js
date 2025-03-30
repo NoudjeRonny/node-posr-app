@@ -1,4 +1,4 @@
-// protec routes middleware function
+// protecT routes middleware function
 
 export const protectedRoute = (req ,res, next)=>{
 if(!req.session.user){

@@ -5,7 +5,9 @@ import authRoutes from './routes/authRoutes.js';
 import cookieParser from 'cookie-parser';
 import session from 'express-session';
 import flash from 'connect-flash';
+import postRoute from './routes/postRoute.js';
 import nodemailer from 'nodemailer';
+import path from 'path';
 // import connectMongoDB from './db';
 
 const app = express();
@@ -17,7 +19,8 @@ connectMongoDB();
 // middlewares
 app.use(express.json()); // pass all the request in to json format
 app.use(express.urlencoded({extended:false}));
-
+ // make upload directories as static
+ app.use('/uploads', express.static(path.join(process.cwd(),'uploads')));
 // cookie middleware
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
@@ -48,12 +51,10 @@ app.use(function (req,res,next){
 
 // setting ejs view engine
 app.set('view engine','ejs');
-//seting the routes
+//seting the Authe routes
 app.use('/',authRoutes);
 //home route
-app.get('/',(req,res)=>{
-    res.render('index',{title:'HOME PAGE', active:'home'});
-});
+app.use("/",postRoute);
 
 app.listen(port,()=>{
     console.log(`server is runing on port http://localhost:${port}`);

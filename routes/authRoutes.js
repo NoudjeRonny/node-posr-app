@@ -98,7 +98,7 @@ req.session.destroy();
 res.redirect('/login');
 });
 
-router.get('/logout',(req,res)=>{
+    router.get('/logout',(req,res)=>{
     req.session.destroy();
     res.redirect('/login');
     });
