@@ -139,4 +139,38 @@ router.post('/create-post',protectedRoute,upload.single('image'), async(req,res)
     }
 })
 
+// hanadling delete post
+
+router.post('/delete-post/:id',protectedRoute,async(req, res)=>{
+  console.log("delete post  service is been getting ")
+try {
+  const postId = req.params.id;
+  const post = await Post.findById(postId);
+  if(!post){
+    req.flash("error","Post not found");
+    return res.redirect('/my-posts');
+  }
+
+  await User.updateOne({_id:req.session.user._id}, {$pull: {posts: postId}});
+  await Post.deleteOne({_id:postId});
+
+  unlink(Path.join(process.cwd(), 'uploads') + '/' + post.image, (err)=>{
+    if(err){
+      console.error(err);
+    }
+  });
+
+  req.flash("success","Post Successfully Deleted!");
+  res.redirect("/my-posts");
+
+
+
+} catch (error) {
+  console.error(error);
+  req.flash("error","Something went Wrong!");
+  res.redirect('/my-posts');
+}
+});
+
+
 export default router;

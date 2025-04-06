@@ -8,7 +8,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server",
-    "dev": "node --watch server",
+    "dev": "nodemon --watch server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
