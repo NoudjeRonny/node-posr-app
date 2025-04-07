@@ -23,9 +23,31 @@ const upload = multer({storage: storage})
 
 
 // route for home page
-router.get('/',(req,res)=>{
-    res.render('index',{title:'HOME PAGE', active:'home'});
-});
+  router.get('/', async (req, res) => {
+  const page = parseInt(req.query.page) || 1; // Default to page 1
+  const limit = 2;
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const totalPosts = await Post.countDocuments().exec();
+  const posts = await Post.find()
+      .populate({ path: 'user', select: '-password' })
+      .sort({ _id: -1 })
+      .limit(limit)
+      .skip(startIndex)
+      .exec();
+
+  const pagination = {
+      currentPage: page,
+      totalPage: Math.ceil(totalPosts / limit),
+      hasNextPage: endIndex < totalPosts,
+      hasPrevPage: startIndex > 0,
+      nextPage: page + 1,
+      prevPage: page - 1
+  };
+
+  res.render('index', { title: 'HOME PAGE', active: 'home', posts, pagination });
+  });
 
 // route for my post
 router.get('/my-posts',protectedRoute, async(req,res)=>{
@@ -110,10 +132,29 @@ try {
 }
 });
 
-// route for view post
-router.get('/post/:id',(req,res)=>{
-  res.render('posts/view-post',{title:"view Post",active:'view_post'});
+// route for view post using slug
+router.get('/post/:slug', async (req, res) => {
+  try {
+      const postSlug = req.params.slug;
+      const post = await Post.findOne({ slug: postSlug }).populate('user'); // Find post by slug
+
+      if (!post) {
+          req.flash('error', 'Post not found');
+          return res.redirect('/my-posts');
+      }
+
+      res.render('posts/view-post', {
+          title: "View Post",
+          active: 'view_post',
+          post // pass the post data to the view
+      });
+  } catch (error) {
+      console.error(error);
+      req.flash('error', 'Something went wrong');
+      res.redirect('/my-posts');
+  }
 });
+
 // router for handling create new post
 router.post('/create-post',protectedRoute,upload.single('image'), async(req,res)=>{
 

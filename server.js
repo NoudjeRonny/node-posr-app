@@ -8,6 +8,9 @@ import flash from 'connect-flash';
 import postRoute from './routes/postRoute.js';
 import nodemailer from 'nodemailer';
 import path from 'path';
+import connectMongoDBSession from 'connect-mongodb-session';
+import mongoose  from 'mongoose';
+const MongoDBStore = connectMongoDBSession(session);
 // import connectMongoDB from './db';
 
 const app = express();
@@ -31,7 +34,12 @@ app.use(session({
     saveUninitialized:false,
     cookie:{
         maxAge:60000*60*24*7 // for one week
-    }
+    },
+    store: new MongoDBStore({
+     uri:  process.env.MONGO_DB_URL,
+     collection: 'sessions'
+     
+    })
 })); // for storing authenticated user
 
 // store authenticated user's session data for views
